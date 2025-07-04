@@ -1,0 +1,14 @@
+artifact_uri: file:///C:/Users/darachin.kong/Desktop/Experiment/mlflow/mlruns/0/215360845d1f4621b0e097b012dc6736/artifacts
+end_time: 1751599826604
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: 215360845d1f4621b0e097b012dc6736
+run_name: bedecked-shark-252
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1751599814617
+status: 3
+tags: []
+user_id: darachin.kong

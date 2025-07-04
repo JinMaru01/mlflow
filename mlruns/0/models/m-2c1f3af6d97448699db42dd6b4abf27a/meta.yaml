@@ -1,0 +1,10 @@
+artifact_location: file:///C:/Users/darachin.kong/Desktop/Experiment/mlflow/mlruns/0/models/m-2c1f3af6d97448699db42dd6b4abf27a/artifacts
+creation_timestamp: 1751597200113
+experiment_id: '0'
+last_updated_timestamp: 1751597215296
+model_id: m-2c1f3af6d97448699db42dd6b4abf27a
+model_type: null
+name: model
+source_run_id: 7441a2e89b454a2b9d03f29b259d8332
+status: 2
+status_message: null

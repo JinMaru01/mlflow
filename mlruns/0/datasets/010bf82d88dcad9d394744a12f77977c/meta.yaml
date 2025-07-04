@@ -1,0 +1,10 @@
+digest: 38a85784
+name: dataset
+profile: '{"num_rows": 30, "num_elements": 120}'
+schema: '{"mlflow_colspec": [{"type": "double", "name": "sepal length (cm)", "required":
+  true}, {"type": "double", "name": "sepal width (cm)", "required": true}, {"type":
+  "double", "name": "petal length (cm)", "required": true}, {"type": "double", "name":
+  "petal width (cm)", "required": true}]}'
+source: '{"tags": {"mlflow.user": "darachin.kong", "mlflow.source.name": "train.py",
+  "mlflow.source.type": "LOCAL"}}'
+source_type: code

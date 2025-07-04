@@ -1,0 +1,14 @@
+artifact_uri: file:///C:/Users/darachin.kong/Desktop/Experiment/mlflow/mlruns/0/7441a2e89b454a2b9d03f29b259d8332/artifacts
+end_time: 1751597220901
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: 7441a2e89b454a2b9d03f29b259d8332
+run_name: receptive-deer-698
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1751597199910
+status: 3
+tags: []
+user_id: darachin.kong
