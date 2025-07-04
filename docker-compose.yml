@@ -1,0 +1,50 @@
+version: '3.8'
+
+services:
+  mlflow-db:
+    image: postgres:15
+    container_name: mlflow-db
+    environment:
+      POSTGRES_USER: mlflow
+      POSTGRES_PASSWORD: mlflow
+      POSTGRES_DB: mlflow
+    ports:
+      - "5432:5432"
+    volumes:
+      - mlflow_db_data:/var/lib/postgresql/data
+
+  minio:
+    image: minio/minio
+    container_name: minio
+    environment:
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin
+    command: server /data --console-address ":9001"
+    ports:
+      - "9000:9000"  # S3 API
+      - "9001:9001"  # Web UI
+    volumes:
+      - minio_data:/data
+
+  mlflow-server:
+    build:
+      context: .
+    container_name: mlflow-server
+    environment:
+      BACKEND_STORE_URI: postgresql://mlflow:mlflow@mlflow-db:5432/mlflow
+      MLFLOW_S3_ENDPOINT_URL: http://minio:9000
+      AWS_ACCESS_KEY_ID: minioadmin
+      AWS_SECRET_ACCESS_KEY: minioadmin
+      ARTIFACT_ROOT: s3://mlflow-artifacts/
+    working_dir: /mlflow
+    volumes:
+      - ./mlflow:/mlflow
+    ports:
+      - "5000:5000"
+    depends_on:
+      - mlflow-db
+      - minio
+
+volumes:
+  mlflow_db_data:
+  minio_data:

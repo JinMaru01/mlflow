@@ -1,0 +1,14 @@
+artifact_uri: file:///C:/Users/darachin.kong/Desktop/Experiment/mlflow/mlruns/0/f5875cba988843dc9ea3954808edcd76/artifacts
+end_time: 1751597048401
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: f5875cba988843dc9ea3954808edcd76
+run_name: adaptable-ox-345
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1751597014506
+status: 3
+tags: []
+user_id: darachin.kong
