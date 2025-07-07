@@ -1,10 +1,16 @@
+import os
 import mlflow
 import pandas as pd
 
-# --- Configuration ---
+# --- MinIO / S3 Configuration ---
+os.environ["AWS_ACCESS_KEY_ID"] = "minioadmin"  # or your access key
+os.environ["AWS_SECRET_ACCESS_KEY"] = "minioadmin"  # or your secret key
+os.environ["MLFLOW_S3_ENDPOINT_URL"] = "http://10.120.210.54:9000"  # MinIO endpoint
+
+# --- MLflow Tracking Configuration ---
 TRACKING_URI = "http://10.120.210.54:5000"
-RUN_ID = "7d344f95837a4dd7892bf6b9caa41ec3"  # Replace with your actual run ID
-MODEL_NAME_IN_RUN = "Random Forest Classifier"  # Default name used by sklearn.autolog()
+RUN_ID = "f33cc6b5591044129cd9720619483b0e"  # Your run ID
+MODEL_NAME_IN_RUN = "model"  # The artifact path used in log_model()
 
 # --- Set MLflow Tracking URI ---
 mlflow.set_tracking_uri(TRACKING_URI)
