@@ -3,12 +3,12 @@ import mlflow
 import pandas as pd
 
 # --- MinIO / S3 Configuration ---
-os.environ["AWS_ACCESS_KEY_ID"] = "minioadmin"  # or your access key
-os.environ["AWS_SECRET_ACCESS_KEY"] = "minioadmin"  # or your secret key
-os.environ["MLFLOW_S3_ENDPOINT_URL"] = "http://10.120.210.54:9000"  # MinIO endpoint
+os.environ["AWS_ACCESS_KEY_ID"] = os.getenv("AWS_ACCESS_KEY_ID")     
+os.environ["AWS_SECRET_ACCESS_KEY"] = os.getenv("AWS_SECRET_ACCESS_KEY")
+os.environ["MLFLOW_S3_ENDPOINT_URL"] = os.getenv("MLFLOW_S3_ENDPOINT_URL") 
 
 # --- MLflow Tracking Configuration ---
-TRACKING_URI = "http://10.120.210.54:5000"
+TRACKING_URI = os.getenv("TRACKING_URI")
 RUN_ID = "f33cc6b5591044129cd9720619483b0e"  # Your run ID
 MODEL_NAME_IN_RUN = "model"  # The artifact path used in log_model()
 
