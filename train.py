@@ -1,3 +1,4 @@
+import os
 import mlflow
 from mlflow.tracking import MlflowClient
 import mlflow.sklearn
@@ -9,7 +10,13 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-TRACKING_URI = "http://10.120.210.56:5000"
+# --- S3 / MinIO Config ---
+os.environ["AWS_ACCESS_KEY_ID"] = "minioadmin"           # Change if using AWS
+os.environ["AWS_SECRET_ACCESS_KEY"] = "minioadmin"
+os.environ["MLFLOW_S3_ENDPOINT_URL"] = "http://10.120.210.54:9000"  # MinIO endpoint
+
+# --- MLflow Config ---
+TRACKING_URI = "http://10.120.210.54:5000"
 EXPERIMENT_NAME = "Random Forest Classifier"
 BASE_RUN_NAME = "Random Forest Classifier"
 
@@ -23,7 +30,7 @@ if experiment is None:
 else:
     experiment_id = experiment.experiment_id
 
-# Fetch recent runs and find max version from run names or params
+# Determine next version number
 runs = client.search_runs(
     experiment_ids=[experiment_id],
     order_by=["attributes.start_time DESC"],
@@ -33,23 +40,20 @@ runs = client.search_runs(
 max_version = 0
 for run in runs:
     run_name = run.data.tags.get("mlflow.runName", "")
-    if run_name.startswith(BASE_RUN_NAME):
-        # Try to parse version from run name suffix: e.g. "Random Forest Classifier v3"
-        if " v" in run_name:
-            try:
-                version_num = int(run_name.split(" v")[-1])
-                if version_num > max_version:
-                    max_version = version_num
-            except ValueError:
-                pass
+    if run_name.startswith(BASE_RUN_NAME) and " v" in run_name:
+        try:
+            version_num = int(run_name.split(" v")[-1])
+            max_version = max(max_version, version_num)
+        except ValueError:
+            pass
 
 current_version = max_version + 1
 current_run_name = f"{BASE_RUN_NAME} v{current_version}"
-
-print(f"Starting run with name: {current_run_name}")
+print(f"🚀 Starting run: {current_run_name}")
 
 mlflow.sklearn.autolog()
 
+# --- Load data and train ---
 iris = load_iris()
 X = pd.DataFrame(iris.data, columns=iris.feature_names)
 y = iris.target
@@ -64,16 +68,15 @@ with mlflow.start_run(experiment_id=experiment_id, run_name=current_run_name) as
 
     preds = model.predict(X_test)
 
-    acc = accuracy_score(y_test, preds)
-    precision = precision_score(y_test, preds, average='weighted')
-    recall = recall_score(y_test, preds, average='weighted')
-    f1 = f1_score(y_test, preds, average='weighted')
+    # Log metrics
+    mlflow.log_metrics({
+        "accuracy": accuracy_score(y_test, preds),
+        "precision": precision_score(y_test, preds, average='weighted'),
+        "recall": recall_score(y_test, preds, average='weighted'),
+        "f1_score": f1_score(y_test, preds, average='weighted')
+    })
 
-    mlflow.log_metric("accuracy", acc)
-    mlflow.log_metric("precision", precision)
-    mlflow.log_metric("recall", recall)
-    mlflow.log_metric("f1_score", f1)
-
+    # Log confusion matrix plot
     cm = confusion_matrix(y_test, preds)
     plt.figure(figsize=(6, 4))
     sns.heatmap(cm, annot=True, fmt="d", cmap="Blues")
@@ -84,4 +87,11 @@ with mlflow.start_run(experiment_id=experiment_id, run_name=current_run_name) as
     mlflow.log_artifact("confusion_matrix.png")
     plt.close()
 
-    print(f"Model and metrics logged with run name: {current_run_name}")
+    # Log model artifact
+    mlflow.sklearn.log_model(model, artifact_path="model")
+
+    # Register model to model registry
+    model_uri = f"runs:/{run.info.run_id}/model"
+    result = mlflow.register_model(model_uri=model_uri, name="IrisClassifier")
+
+    print(f"✅ Model logged and registered: {result.name} v{result.version}")
